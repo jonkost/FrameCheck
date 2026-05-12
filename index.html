@@ -204,6 +204,8 @@ body {
   border-color: var(--border);
 }
 .up-box.has-img:hover { border-color: var(--red); }
+.up-box.frame-ok { border: 3px solid var(--ok); }
+.up-box.frame-ok:hover { border-color: var(--ok); }
 
 .up-hint {
   display: flex;
@@ -254,7 +256,6 @@ body {
   font-weight: 700;
   line-height: 1;
 }
-.img-chip.ok  { background: var(--ok); color: #fff; display: flex; }
 .img-chip.bad { background: var(--err); color: #fff; display: flex; }
 
 .recrop-btn {
@@ -879,7 +880,7 @@ input[type="file"] { display: none; }
     <div class="chk" id="chk-i"><span class="ci">○</span>Frames uploaded</div>
     <div class="chk" id="chk-t"><span class="ci">○</span>Analyses written</div>
   </div>
-  <button class="exp-btn" id="exp-btn" disabled onclick="exportPDF()">Export PDF</button>
+  <button class="exp-btn" id="exp-btn" onclick="exportPDF()">Export PDF</button>
 </div>
 
 <script>
@@ -1074,80 +1075,107 @@ function drawOverlays(ctx) {
 }
 
 function drawThirds(ctx) {
-  ctx.strokeStyle = 'rgba(255,255,255,0.72)';
-  ctx.lineWidth = 1;
+  // Soft glow pass
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 6;
   ctx.setLineDash([]);
-  [CW/3, CW*2/3].forEach(x => {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CH); ctx.stroke();
-  });
-  [CH/3, CH*2/3].forEach(y => {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CW, y); ctx.stroke();
-  });
-  // Power-point dots at intersections
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  [CW/3, CW*2/3].forEach(x => { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CH); ctx.stroke(); });
+  [CH/3, CH*2/3].forEach(y => { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CW,y); ctx.stroke(); });
+  // Sharp line pass
+  ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+  ctx.lineWidth = 1.5;
+  [CW/3, CW*2/3].forEach(x => { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CH); ctx.stroke(); });
+  [CH/3, CH*2/3].forEach(y => { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CW,y); ctx.stroke(); });
+  // Intersection dots
   [[CW/3,CH/3],[CW*2/3,CH/3],[CW/3,CH*2/3],[CW*2/3,CH*2/3]].forEach(([x,y]) => {
-    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
   });
 }
 
 function drawCenter(ctx) {
-  const cx = CW / 2, cy = CH / 2, arm = 24, gap = 5;
-  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([]);
+  const cx = CW/2, cy = CH/2, arm = 30, gap = 6;
+  // Glow
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 8; ctx.setLineDash([]);
   ctx.beginPath();
-  ctx.moveTo(cx - arm, cy); ctx.lineTo(cx - gap, cy);
-  ctx.moveTo(cx + gap, cy); ctx.lineTo(cx + arm, cy);
-  ctx.moveTo(cx, cy - arm); ctx.lineTo(cx, cy - gap);
-  ctx.moveTo(cx, cy + gap); ctx.lineTo(cx, cy + arm);
+  ctx.moveTo(cx-arm,cy); ctx.lineTo(cx-gap,cy);
+  ctx.moveTo(cx+gap,cy); ctx.lineTo(cx+arm,cy);
+  ctx.moveTo(cx,cy-arm); ctx.lineTo(cx,cy-gap);
+  ctx.moveTo(cx,cy+gap); ctx.lineTo(cx,cy+arm);
   ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+  // Sharp
+  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx-arm,cy); ctx.lineTo(cx-gap,cy);
+  ctx.moveTo(cx+gap,cy); ctx.lineTo(cx+arm,cy);
+  ctx.moveTo(cx,cy-arm); ctx.lineTo(cx,cy-gap);
+  ctx.moveTo(cx,cy+gap); ctx.lineTo(cx,cy+arm);
+  ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI*2);
+  ctx.fillStyle = '#fff'; ctx.fill();
 }
 
 function drawSafe(ctx) {
-  const ax = CW * 0.05, ay = CH * 0.05, aw = CW * 0.9, ah = CH * 0.9;
-  const tx = CW * 0.10, ty = CH * 0.10, tw = CW * 0.8, th = CH * 0.8;
-  // Action safe — solid
-  ctx.strokeStyle = 'rgba(255,210,0,0.85)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([]);
+  const ax = CW*0.05, ay = CH*0.05, aw = CW*0.9, ah = CH*0.9;
+  const tx = CW*0.10, ty = CH*0.10, tw = CW*0.8, th = CH*0.8;
+  // Action safe glow + line
+  ctx.strokeStyle = 'rgba(255,220,0,0.2)';
+  ctx.lineWidth = 6; ctx.setLineDash([]);
   ctx.strokeRect(ax, ay, aw, ah);
-  // Title safe — dashed
-  ctx.strokeStyle = 'rgba(255,210,0,0.55)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = 'rgba(255,220,0,1)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(ax, ay, aw, ah);
+  // Title safe glow + dashed
+  ctx.strokeStyle = 'rgba(255,220,0,0.15)';
+  ctx.lineWidth = 5; ctx.setLineDash([]);
+  ctx.strokeRect(tx, ty, tw, th);
+  ctx.strokeStyle = 'rgba(255,220,0,0.85)';
+  ctx.lineWidth = 1.5; ctx.setLineDash([8, 5]);
   ctx.strokeRect(tx, ty, tw, th);
   ctx.setLineDash([]);
-  // Labels
-  ctx.font = 'bold 9px DM Mono, monospace';
-  ctx.fillStyle = 'rgba(255,210,0,0.85)';
-  ctx.fillText('ACTION SAFE', ax + 5, ay + 14);
-  ctx.fillStyle = 'rgba(255,210,0,0.55)';
-  ctx.fillText('TITLE SAFE', tx + 5, ty + 14);
+  // Labels with dark backing
+  ctx.font = 'bold 11px DM Mono, monospace';
+  ['ACTION SAFE', 'TITLE SAFE'].forEach((lbl, j) => {
+    const lx = j === 0 ? ax+6 : tx+6;
+    const ly = j === 0 ? ay+15 : ty+15;
+    const col = j === 0 ? 'rgba(255,220,0,1)' : 'rgba(255,220,0,0.85)';
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(lx-2, ly-11, ctx.measureText(lbl).width+4, 14);
+    ctx.fillStyle = col;
+    ctx.fillText(lbl, lx, ly);
+  });
 }
 
 function drawGrid(ctx) {
-  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-  ctx.lineWidth = 0.5;
-  ctx.setLineDash([]);
   const cols = 6, rows = 4;
-  for (let c = 1; c < cols; c++) {
-    const x = (CW / cols) * c;
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CH); ctx.stroke();
-  }
-  for (let r = 1; r < rows; r++) {
-    const y = (CH / rows) * r;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CW, y); ctx.stroke();
-  }
+  ctx.setLineDash([]);
+  // Glow
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 4;
+  for (let c=1;c<cols;c++){const x=(CW/cols)*c;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke();}
+  for (let r=1;r<rows;r++){const y=(CH/rows)*r;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
+  // Sharp
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+  ctx.lineWidth = 1;
+  for (let c=1;c<cols;c++){const x=(CW/cols)*c;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke();}
+  for (let r=1;r<rows;r++){const y=(CH/rows)*r;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
 }
 
 function drawDiag(ctx) {
-  ctx.strokeStyle = 'rgba(255,255,255,0.42)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([5, 5]);
-  ctx.beginPath(); ctx.moveTo(0, 0);  ctx.lineTo(CW, CH); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(CW, 0); ctx.lineTo(0, CH);  ctx.stroke();
+  // Glow
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 6; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(0,0);  ctx.lineTo(CW,CH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(CW,0); ctx.lineTo(0,CH);  ctx.stroke();
+  // Sharp dashed
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 1.5; ctx.setLineDash([8, 6]);
+  ctx.beginPath(); ctx.moveTo(0,0);  ctx.lineTo(CW,CH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(CW,0); ctx.lineTo(0,CH);  ctx.stroke();
   ctx.setLineDash([]);
 }
 
@@ -1276,9 +1304,8 @@ function applyCrop() {
   prev.src           = ST[i].dataUrl;
   prev.style.display = 'block';
   hint.style.display = 'none';
-  box.classList.add('has-img');
-  chip.className     = 'img-chip ok';
-  chip.textContent   = '✓';
+  box.classList.add('has-img', 'frame-ok');
+  chip.className     = '';
   setMsg(i, '✓  Frame set and ready', 'ok');
 
   updateRow(i);
@@ -1345,7 +1372,7 @@ function updateBar() {
   setChk('chk-i', imgOk);
   setChk('chk-t', txtOk);
 
-  document.getElementById('exp-btn').disabled = !nameOk;
+  // Export always available — partial credit supported
 }
 
 function setChk(id, pass) {
@@ -1382,7 +1409,7 @@ async function exportPDF() {
 
   try {
     const { jsPDF } = window.jspdf;
-    const student   = document.getElementById('sname').value.trim();
+    const student   = document.getElementById('sname').value.trim() || 'Student';
     const pdf       = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const PW = 210, PH = 297, M = 14;
     const CW_PDF = PW - M * 2;
