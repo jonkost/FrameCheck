@@ -322,12 +322,14 @@ input[type="file"] { display: none; }
 
 .char-ct {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   text-align: right;
   margin-top: 7px;
-  opacity: 0.7;
+  transition: color 0.2s;
 }
+.char-ct.going { color: var(--warn); }
+.char-ct.done  { color: var(--ok); font-weight: 500; }
 
 /* ── CROP MODAL ──────────────────────────────────────────── */
 .modal-overlay {
@@ -459,6 +461,81 @@ input[type="file"] { display: none; }
 }
 .btn-apply:hover { background: #A82214; }
 
+/* ── OVERLAY BAR ─────────────────────────────────────────── */
+.ov-bar {
+  background: #161616;
+  padding: 9px 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.ov-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 3px;
+  white-space: nowrap;
+}
+.ov-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 20px;
+  color: rgba(255,255,255,0.5);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 12px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+}
+.ov-btn:hover {
+  background: rgba(255,255,255,0.13);
+  color: rgba(255,255,255,0.8);
+}
+.ov-btn.on {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.45);
+  color: #fff;
+}
+
+/* ── ZOOM GROUP ──────────────────────────────────────────── */
+.modal-ftr-l { display: flex; align-items: center; gap: 10px; }
+.zoom-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-hi);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.btn-zoom {
+  background: none;
+  border: none;
+  color: var(--muted-hi);
+  font-size: 15px;
+  line-height: 1;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+.btn-zoom:hover { background: var(--bg); color: var(--text); }
+.zoom-pct {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-hi);
+  padding: 0 8px;
+  border-left: 1px solid var(--border-hi);
+  border-right: 1px solid var(--border-hi);
+  min-width: 46px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* ── STICKY BAR ──────────────────────────────────────────── */
 .sticky-bar {
   position: fixed;
@@ -548,15 +625,138 @@ input[type="file"] { display: none; }
 }
 .exp-btn.busy { opacity: 0.6; cursor: wait; }
 
+/* ── INSTRUCTIONS BUTTON ─────────────────────────────────── */
+.instr-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  color: rgba(255,255,255,0.65);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.14s, color 0.14s;
+}
+.instr-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+/* ── INSTRUCTIONS MODAL ──────────────────────────────────── */
+.instr-box { max-width: 600px; }
+.instr-scroll {
+  padding: 22px 24px 24px;
+  overflow-y: auto;
+  max-height: 72vh;
+  -webkit-overflow-scrolling: touch;
+}
+.instr-intro {
+  font-size: 14px;
+  color: var(--muted-hi);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.instr-h {
+  font-family: var(--head);
+  font-size: 17px;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.instr-shot {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 6px 14px;
+  align-items: baseline;
+  margin-bottom: 13px;
+}
+.instr-shot-name {
+  font-family: var(--head);
+  font-size: 15px;
+  color: var(--red);
+  letter-spacing: 0.5px;
+}
+.instr-shot-desc {
+  font-size: 13px;
+  color: var(--muted-hi);
+  line-height: 1.55;
+}
+.instr-reqs {
+  list-style: none;
+  margin-top: 14px;
+}
+.instr-reqs li {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted-hi);
+  line-height: 1;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.instr-reqs li:last-child { border-bottom: none; }
+.instr-reqs .ri { color: var(--red); flex-shrink: 0; }
+
 /* ── RESPONSIVE ──────────────────────────────────────────── */
-@media (max-width: 680px) {
+@media (max-width: 720px) {
+  body { padding-bottom: 70px; }
+
+  /* Header */
+  .app-hdr {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 10px 16px;
+    gap: 8px;
+    row-gap: 0;
+  }
+  .logo { font-size: 24px; }
+  .hdr-title { display: none; }
+  .instr-btn { font-size: 10px; padding: 6px 11px; }
+  /* Name row drops below logo + button */
+  .name-wrap {
+    order: 10;
+    width: 100%;
+    margin: 8px 0 4px;
+    padding: 8px 12px 10px;
+    border-radius: 6px;
+  }
+  .name-inp { width: 100%; flex: 1; font-size: 16px; /* prevent iOS zoom */ }
+
+  /* Shot rows */
+  .container     { padding: 14px 12px 0; }
+  .shot-row      { border-radius: 10px; margin-bottom: 14px; }
+  .row-hdr       { padding: 12px 16px 10px; gap: 8px; }
+  .row-type      { font-size: 20px; }
   .row-body      { grid-template-columns: 1fr; }
-  .up-panel      { border-right: none; border-bottom: 1px solid var(--border); }
-  .app-hdr       { padding: 0 18px; gap: 14px; }
-  .hdr-title     { display: none; }
-  .sticky-bar    { padding: 10px 18px; flex-wrap: wrap; gap: 10px; }
-  .bar-checks    { display: none; }
-  .container     { padding: 18px 14px 0; }
+  .up-panel      { padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--border); }
+  .an-panel      { padding: 14px 16px; }
+  .an-q          { font-size: 14px; margin-bottom: 9px; }
+  .an-ta         { min-height: 100px; font-size: 15px; /* prevent iOS zoom */ }
+
+  /* Crop modal — full screen */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal-box     { border-radius: 16px 16px 0 0; max-height: 96dvh; overflow: hidden; display: flex; flex-direction: column; }
+  .canvas-wrap   { flex: 1; min-height: 0; }
+  #crop-canvas   { width: 100%; height: 100%; object-fit: contain; }
+  .ov-bar        { overflow-x: auto; flex-wrap: nowrap; padding: 8px 14px; scrollbar-width: none; }
+  .ov-bar::-webkit-scrollbar { display: none; }
+  .modal-ftr     { padding: 12px 16px; }
+  .btn-reset     { display: none; }
+
+  /* Instructions modal */
+  .instr-box     { max-width: 100%; border-radius: 16px 16px 0 0; }
+  .instr-scroll  { max-height: 80dvh; padding: 18px 18px 24px; }
+  .instr-shot    { grid-template-columns: 1fr; gap: 2px; }
+
+  /* Sticky bar */
+  .sticky-bar  { padding: 10px 16px; gap: 8px; }
+  .bar-checks  { display: none; }
+  .bar-ct      { font-size: 10px; }
+  .exp-btn     { padding: 10px 20px; font-size: 17px; }
 }
 </style>
 </head>
@@ -566,6 +766,7 @@ input[type="file"] { display: none; }
 <header class="app-hdr">
   <div class="logo">Frame<b>Check</b></div>
   <div class="hdr-title">Assignment 1.1 — On Location Camera Composition</div>
+  <button class="instr-btn" onclick="openInstr()">Instructions</button>
   <div class="name-wrap">
     <label class="name-lbl" for="sname">Student</label>
     <input type="text" id="sname" class="name-inp" placeholder="Your full name" autocomplete="name">
@@ -577,20 +778,83 @@ input[type="file"] { display: none; }
   <div class="modal-box">
     <div class="modal-hdr">
       <div>
-        <div class="modal-title">Crop to 16:9</div>
-        <div class="modal-sub">Drag to reposition &nbsp;·&nbsp; Scroll or pinch to zoom</div>
+        <div class="modal-title">Frame to 16:9</div>
+        <div class="modal-sub">Drag to position left/right &nbsp;·&nbsp; Scroll or pinch to scale</div>
       </div>
       <button class="modal-x" onclick="closeCrop()">✕</button>
     </div>
     <div class="canvas-wrap">
       <canvas id="crop-canvas" width="720" height="405"></canvas>
     </div>
+    <div class="ov-bar">
+      <span class="ov-lbl">Overlays</span>
+      <button class="ov-btn" id="ov-thirds" onclick="toggleOv('thirds')">Rule of Thirds</button>
+      <button class="ov-btn" id="ov-center" onclick="toggleOv('center')">Center Mark</button>
+      <button class="ov-btn" id="ov-safe"   onclick="toggleOv('safe')">Safe Areas</button>
+      <button class="ov-btn" id="ov-grid"   onclick="toggleOv('grid')">Grid</button>
+      <button class="ov-btn" id="ov-diag"   onclick="toggleOv('diag')">Diagonals</button>
+    </div>
     <div class="modal-ftr">
-      <button class="btn-reset" onclick="resetCrop()">Reset Position</button>
+      <div class="modal-ftr-l">
+        <button class="btn-reset" onclick="resetCrop()">Reset</button>
+        <div class="zoom-group">
+          <button class="btn-zoom" onclick="zoomCrop(-1)">−</button>
+          <span class="zoom-pct" id="zoom-pct">100%</span>
+          <button class="btn-zoom" onclick="zoomCrop(1)">+</button>
+        </div>
+      </div>
       <div class="modal-acts">
         <button class="btn-cancel" onclick="closeCrop()">Cancel</button>
         <button class="btn-apply" onclick="applyCrop()">Apply Crop</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── INSTRUCTIONS MODAL ────────────────────────────────── -->
+<div id="instr-modal" class="modal-overlay" onclick="if(event.target===this)closeInstr()">
+  <div class="modal-box instr-box">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title">Assignment Instructions</div>
+        <div class="modal-sub">Assignment 1.1 — On Location Camera Composition</div>
+      </div>
+      <button class="modal-x" onclick="closeInstr()">✕</button>
+    </div>
+    <div class="instr-scroll">
+      <p class="instr-intro">Capture five different shot types on location — not in a studio. All footage must be recorded horizontally. For each shot, upload your frame and write a minimum of <strong>50 words</strong> explaining what makes it that shot type.</p>
+
+      <div class="instr-h">The Five Shots</div>
+
+      <div class="instr-shot">
+        <div class="instr-shot-name">Wide Shot</div>
+        <div class="instr-shot-desc">Establishes the full location. The viewer should immediately understand where the scene takes place — the environment is the subject.</div>
+      </div>
+      <div class="instr-shot">
+        <div class="instr-shot-name">Full Shot</div>
+        <div class="instr-shot-desc">Shows a subject from head to toe within the environment. Both the person and their surroundings are clearly visible in the frame.</div>
+      </div>
+      <div class="instr-shot">
+        <div class="instr-shot-name">Medium Shot</div>
+        <div class="instr-shot-desc">Frames the subject from the waist up. Balances the subject's body language and expression with some environmental context.</div>
+      </div>
+      <div class="instr-shot">
+        <div class="instr-shot-name">Close Up</div>
+        <div class="instr-shot-desc">Fills the frame with the subject's face or a key detail. The background recedes — the subject becomes the sole focus.</div>
+      </div>
+      <div class="instr-shot">
+        <div class="instr-shot-name">Extreme Close Up</div>
+        <div class="instr-shot-desc">Isolates a single specific detail — an eye, a hand, a texture, a prop. Reveals something the wider shots cannot show.</div>
+      </div>
+
+      <div class="instr-h" style="margin-top:24px">Submission Requirements</div>
+      <ul class="instr-reqs">
+        <li><span class="ri">→</span> All frames must be captured horizontally (landscape orientation)</li>
+        <li><span class="ri">→</span> Each frame must be cropped to 16:9 using the framing tool</li>
+        <li><span class="ri">→</span> Write at least 50 words of analysis for each shot</li>
+        <li><span class="ri">→</span> Enter your full name before exporting</li>
+        <li><span class="ri">→</span> Export as a PDF and submit the file to your instructor</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -612,7 +876,7 @@ input[type="file"] { display: none; }
   </div>
   <div class="bar-checks">
     <div class="chk" id="chk-n"><span class="ci">○</span>Student name</div>
-    <div class="chk" id="chk-i"><span class="ci">○</span>Images uploaded</div>
+    <div class="chk" id="chk-i"><span class="ci">○</span>Frames uploaded</div>
     <div class="chk" id="chk-t"><span class="ci">○</span>Analyses written</div>
   </div>
   <button class="exp-btn" id="exp-btn" disabled onclick="exportPDF()">Export PDF</button>
@@ -662,12 +926,12 @@ function buildRows() {
                 <polyline points="21 15 16 10 10 17"/>
                 <polyline points="14 17 18 13 21 16"/>
               </svg>
-              <div class="up-lbl">Drop image here<br>or click to upload</div>
-              <div class="up-sub">Landscape images only — will be cropped to 16:9</div>
+              <div class="up-lbl">Drop frame here<br>or click to upload</div>
+              <div class="up-sub">Horizontal frames only — will be framed to 16:9</div>
             </div>
             <img class="prev-img" id="prev-${i}" alt="shot preview">
             <div class="img-chip" id="chip-${i}"></div>
-            <button class="recrop-btn" onclick="event.stopPropagation();reCrop(${i})">Adjust Crop</button>
+            <button class="recrop-btn" onclick="event.stopPropagation();reCrop(${i})">Reframe</button>
           </div>
           <div class="up-msg" id="umsg-${i}"></div>
           <input type="file" accept="image/*" id="fi-${i}" onchange="onFSel(event,${i})">
@@ -706,7 +970,7 @@ function processFile(file, i) {
     const img = new Image();
     img.onload = () => {
       if (img.naturalHeight > img.naturalWidth) {
-        setMsg(i, '✕  Vertical images aren\'t allowed — use a landscape photo.', 'err');
+        setMsg(i, '✕  Vertical frames aren\'t allowed — horizontal frames only.', 'err');
         return;
       }
       setMsg(i, '', '');
@@ -745,6 +1009,7 @@ function openCrop(dataUrl, rowIdx) {
   ct.img.onload = () => {
     initCropPos();
     drawCrop();
+    syncZoomLabel();
     document.getElementById('crop-modal').style.display = 'flex';
   };
   ct.img.src = dataUrl;
@@ -764,7 +1029,7 @@ function initCropPos() {
   clampPan();
 }
 
-function resetCrop() { initCropPos(); drawCrop(); }
+function resetCrop() { initCropPos(); drawCrop(); syncZoomLabel(); }
 
 function clampPan() {
   const iw = ct.img.naturalWidth  * ct.scale;
@@ -784,7 +1049,124 @@ function drawCrop() {
       ct.img.naturalWidth * ct.scale,
       ct.img.naturalHeight * ct.scale
     );
+    drawOverlays(ctx);
   }
+}
+
+/* ── OVERLAYS ───────────────────────────────────────────── */
+const OV = { thirds: false, center: false, safe: false, grid: false, diag: false };
+
+function toggleOv(key) {
+  OV[key] = !OV[key];
+  const btn = document.getElementById(`ov-${key}`);
+  if (btn) btn.classList.toggle('on', OV[key]);
+  drawCrop();
+}
+
+function drawOverlays(ctx) {
+  ctx.save();
+  if (OV.grid)   drawGrid(ctx);
+  if (OV.diag)   drawDiag(ctx);
+  if (OV.thirds) drawThirds(ctx);
+  if (OV.safe)   drawSafe(ctx);
+  if (OV.center) drawCenter(ctx);
+  ctx.restore();
+}
+
+function drawThirds(ctx) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([]);
+  [CW/3, CW*2/3].forEach(x => {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CH); ctx.stroke();
+  });
+  [CH/3, CH*2/3].forEach(y => {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CW, y); ctx.stroke();
+  });
+  // Power-point dots at intersections
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  [[CW/3,CH/3],[CW*2/3,CH/3],[CW/3,CH*2/3],[CW*2/3,CH*2/3]].forEach(([x,y]) => {
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+  });
+}
+
+function drawCenter(ctx) {
+  const cx = CW / 2, cy = CH / 2, arm = 24, gap = 5;
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(cx - arm, cy); ctx.lineTo(cx - gap, cy);
+  ctx.moveTo(cx + gap, cy); ctx.lineTo(cx + arm, cy);
+  ctx.moveTo(cx, cy - arm); ctx.lineTo(cx, cy - gap);
+  ctx.moveTo(cx, cy + gap); ctx.lineTo(cx, cy + arm);
+  ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+}
+
+function drawSafe(ctx) {
+  const ax = CW * 0.05, ay = CH * 0.05, aw = CW * 0.9, ah = CH * 0.9;
+  const tx = CW * 0.10, ty = CH * 0.10, tw = CW * 0.8, th = CH * 0.8;
+  // Action safe — solid
+  ctx.strokeStyle = 'rgba(255,210,0,0.85)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([]);
+  ctx.strokeRect(ax, ay, aw, ah);
+  // Title safe — dashed
+  ctx.strokeStyle = 'rgba(255,210,0,0.55)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 4]);
+  ctx.strokeRect(tx, ty, tw, th);
+  ctx.setLineDash([]);
+  // Labels
+  ctx.font = 'bold 9px DM Mono, monospace';
+  ctx.fillStyle = 'rgba(255,210,0,0.85)';
+  ctx.fillText('ACTION SAFE', ax + 5, ay + 14);
+  ctx.fillStyle = 'rgba(255,210,0,0.55)';
+  ctx.fillText('TITLE SAFE', tx + 5, ty + 14);
+}
+
+function drawGrid(ctx) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([]);
+  const cols = 6, rows = 4;
+  for (let c = 1; c < cols; c++) {
+    const x = (CW / cols) * c;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CH); ctx.stroke();
+  }
+  for (let r = 1; r < rows; r++) {
+    const y = (CH / rows) * r;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CW, y); ctx.stroke();
+  }
+}
+
+function drawDiag(ctx) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.42)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath(); ctx.moveTo(0, 0);  ctx.lineTo(CW, CH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(CW, 0); ctx.lineTo(0, CH);  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+/* ── ZOOM BUTTONS ───────────────────────────────────────── */
+function zoomCrop(dir) {
+  if (!ct.img) return;
+  const fac = dir > 0 ? 1.15 : 1 / 1.15;
+  const ns  = Math.max(ct.minScale, Math.min(ct.scale * fac, ct.minScale * 6));
+  const cx  = CW / 2, cy = CH / 2;
+  const ix  = (cx - ct.panX) / ct.scale;
+  const iy  = (cy - ct.panY) / ct.scale;
+  ct.scale  = ns; ct.panX = cx - ix * ns; ct.panY = cy - iy * ns;
+  clampPan(); drawCrop(); syncZoomLabel();
+}
+
+function syncZoomLabel() {
+  const el = document.getElementById('zoom-pct');
+  if (el && ct.minScale > 0)
+    el.textContent = `${Math.round((ct.scale / ct.minScale) * 100)}%`;
 }
 
 // Convert browser event coords → logical canvas coords
@@ -823,7 +1205,7 @@ function onCWheel(e) {
   const ix  = (p.x - ct.panX) / ct.scale;
   const iy  = (p.y - ct.panY) / ct.scale;
   ct.scale  = ns; ct.panX = p.x - ix * ns; ct.panY = p.y - iy * ns;
-  clampPan(); drawCrop();
+  clampPan(); drawCrop(); syncZoomLabel();
 }
 
 // Touch helpers
@@ -862,7 +1244,7 @@ function onCTM(e) {
     const ix = (mx - ct.panX) / ct.scale;
     const iy = (my - ct.panY) / ct.scale;
     ct.scale = ns; ct.panX = mx - ix * ns; ct.panY = my - iy * ns;
-    clampPan(); drawCrop();
+    clampPan(); drawCrop(); syncZoomLabel();
   }
 }
 function onCTE(e) { if (e.touches.length === 0) ct.dragging = false; }
@@ -897,7 +1279,7 @@ function applyCrop() {
   box.classList.add('has-img');
   chip.className     = 'img-chip ok';
   chip.textContent   = '✓';
-  setMsg(i, '✓  Image cropped and ready', 'ok');
+  setMsg(i, '✓  Frame set and ready', 'ok');
 
   updateRow(i);
   updateBar();
@@ -905,24 +1287,39 @@ function applyCrop() {
 }
 
 /* ── TEXT INPUT ─────────────────────────────────────────── */
+function countWords(str) {
+  return str.trim() === '' ? 0 : str.trim().split(/\s+/).length;
+}
+
 function onText(i) {
   const ta = document.getElementById(`ta-${i}`);
   const cc = document.getElementById(`cc-${i}`);
   ST[i].text = ta.value;
-  const n = ta.value.length;
-  cc.textContent = n === 1 ? '1 character' : `${n} characters`;
+  const w = countWords(ta.value);
+  if (w === 0) {
+    cc.textContent = '0 / 50 words';
+    cc.className = 'char-ct';
+  } else if (w < 50) {
+    cc.textContent = `${w} / 50 words`;
+    cc.className = 'char-ct going';
+  } else {
+    cc.textContent = `${w} words ✓`;
+    cc.className = 'char-ct done';
+  }
   updateRow(i);
   updateBar();
 }
 
 /* ── STATUS ─────────────────────────────────────────────── */
 function updateRow(i) {
-  const s      = ST[i];
-  const hasImg = s.dataUrl !== null;
-  const hasTxt = s.text.trim().length > 0;
-  s.status     = !hasImg && !hasTxt ? 'empty'
-               :  hasImg && hasTxt  ? 'complete'
-               : 'in-progress';
+  const s       = ST[i];
+  const hasImg  = s.dataUrl !== null;
+  const words   = countWords(s.text);
+  const hasTxt  = words > 0;
+  const txtDone = words >= 50;
+  s.status = !hasImg && !hasTxt ? 'empty'
+           :  hasImg && txtDone ? 'complete'
+           : 'in-progress';
 
   const badge = document.getElementById(`bdg-${i}`);
   badge.className   = `row-badge ${s.status}`;
@@ -937,7 +1334,7 @@ function updateBar() {
   const done   = ST.filter(s => s.status === 'complete').length;
   const nameOk = document.getElementById('sname').value.trim().length > 0;
   const imgOk  = ST.every(s => s.dataUrl !== null);
-  const txtOk  = ST.every(s => s.text.trim().length > 0);
+  const txtOk  = ST.every(s => countWords(s.text) >= 50);
 
   document.getElementById('rc').textContent = done;
   ST.forEach((s, i) => {
@@ -948,7 +1345,6 @@ function updateBar() {
   setChk('chk-i', imgOk);
   setChk('chk-t', txtOk);
 
-  // Export requires only a student name; all else is optional
   document.getElementById('exp-btn').disabled = !nameOk;
 }
 
@@ -959,6 +1355,23 @@ function setChk(id, pass) {
 }
 
 document.getElementById('sname').addEventListener('input', updateBar);
+
+/* ── INSTRUCTIONS ───────────────────────────────────────── */
+function openInstr() {
+  document.getElementById('instr-modal').style.display = 'flex';
+}
+function closeInstr() {
+  document.getElementById('instr-modal').style.display = 'none';
+}
+
+/* ── LEAVE WARNING ──────────────────────────────────────── */
+function hasAnyProgress() {
+  return document.getElementById('sname').value.trim().length > 0
+      || ST.some(s => s.dataUrl !== null || s.text.trim().length > 0);
+}
+window.addEventListener('beforeunload', e => {
+  if (hasAnyProgress()) { e.preventDefault(); e.returnValue = ''; }
+});
 
 /* ── PDF EXPORT ─────────────────────────────────────────── */
 async function exportPDF() {
@@ -1016,7 +1429,7 @@ async function exportPDF() {
         pdf.rect(M, imgY, IW, IH, 'F');
         pdf.setTextColor(158, 154, 146);
         pdf.setFontSize(9);
-        pdf.text('No image provided', M + IW / 2, imgY + IH / 2, { align: 'center' });
+        pdf.text('No frame provided', M + IW / 2, imgY + IH / 2, { align: 'center' });
       }
 
       // Analysis section
@@ -1072,7 +1485,7 @@ cc.addEventListener('touchstart', onCTS,    { passive: false });
 cc.addEventListener('touchmove',  onCTM,    { passive: false });
 cc.addEventListener('touchend',   onCTE);
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCrop(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCrop(); closeInstr(); } });
 </script>
 </body>
 </html>
