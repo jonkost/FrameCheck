@@ -626,6 +626,122 @@ input[type="file"] { display: none; }
 }
 .exp-btn.busy { opacity: 0.6; cursor: wait; }
 
+/* ── RESTORE BAR ─────────────────────────────────────────── */
+.restore-bar {
+  background: #FEF7E0;
+  border-bottom: 1px solid #E8D88A;
+  padding: 10px 36px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.restore-bar.show { display: flex; }
+.restore-msg {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #6A5200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.restore-icon { font-size: 16px; }
+.restore-acts { display: flex; gap: 8px; }
+.btn-continue {
+  background: #6A5200; color: #fff;
+  border: none; border-radius: 5px;
+  padding: 6px 14px;
+  font-family: var(--mono); font-size: 11px;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: background 0.14s;
+}
+.btn-continue:hover { background: #4A3800; }
+.btn-fresh {
+  background: none; color: #6A5200;
+  border: 1px solid #C4A800;
+  border-radius: 5px; padding: 6px 14px;
+  font-family: var(--mono); font-size: 11px;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: border-color 0.14s;
+}
+.btn-fresh:hover { border-color: #6A5200; }
+
+/* ── SAVE FLASH ──────────────────────────────────────────── */
+.save-flash {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ok);
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+.save-flash.show { opacity: 1; }
+
+/* ── WELCOME MODAL ───────────────────────────────────────── */
+.welcome-box { max-width: 400px; }
+.welcome-body {
+  padding: 36px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.welcome-logo {
+  font-family: var(--head);
+  font-size: 40px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.welcome-logo b { color: var(--red); font-weight: 400; }
+.welcome-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.welcome-prompt {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  align-self: flex-start;
+}
+.welcome-inp {
+  width: 100%;
+  background: #FAF9F6;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.welcome-inp:focus { border-color: var(--red); }
+.welcome-inp::placeholder { color: var(--muted); }
+.btn-start {
+  width: 100%; margin-top: 12px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 7px;
+  padding: 12px; font-family: var(--head);
+  font-size: 20px; letter-spacing: 1.5px;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-start:hover { background: #A82214; }
+.welcome-skip {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--muted); background: none;
+  border: none; cursor: pointer;
+  margin-top: 12px; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.welcome-skip:hover { color: var(--muted-hi); }
+
 /* ── INSTRUCTIONS BUTTON ─────────────────────────────────── */
 .instr-btn {
   background: rgba(255,255,255,0.1);
@@ -766,7 +882,7 @@ input[type="file"] { display: none; }
 <!-- ── HEADER ────────────────────────────────────────────── -->
 <header class="app-hdr">
   <div class="logo">Frame<b>Check</b></div>
-  <div class="hdr-title">Assignment 1.1 — On Location Camera Composition</div>
+  <div class="hdr-title">Assignment 1.1 — Camera Composition</div>
   <button class="instr-btn" onclick="openInstr()">Instructions</button>
   <div class="name-wrap">
     <label class="name-lbl" for="sname">Student</label>
@@ -812,18 +928,46 @@ input[type="file"] { display: none; }
   </div>
 </div>
 
+<!-- ── RESTORE BAR ───────────────────────────────────────── -->
+<div id="restore-bar" class="restore-bar">
+  <div class="restore-msg">
+    <span class="restore-icon">⟲</span>
+    You have work in progress from a previous session.
+  </div>
+  <div class="restore-acts">
+    <button class="btn-continue" onclick="restoreState()">Continue Working</button>
+    <button class="btn-fresh"    onclick="startFresh()">Start Fresh</button>
+  </div>
+</div>
+
+<!-- ── WELCOME MODAL ─────────────────────────────────────── -->
+<div id="welcome-modal" class="modal-overlay">
+  <div class="modal-box welcome-box">
+    <div class="welcome-body">
+      <div class="welcome-logo">Frame<b>Check</b></div>
+      <div class="welcome-tag">Camera Composition</div>
+      <div class="welcome-prompt">What's your name?</div>
+      <input type="text" id="wname" class="welcome-inp"
+             placeholder="Your full name" autocomplete="name"
+             onkeydown="if(event.key==='Enter')submitWelcome()">
+      <button class="btn-start" onclick="submitWelcome()">Get Started</button>
+      <button class="welcome-skip" onclick="skipWelcome()">Skip for now</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── INSTRUCTIONS MODAL ────────────────────────────────── -->
 <div id="instr-modal" class="modal-overlay" onclick="if(event.target===this)closeInstr()">
   <div class="modal-box instr-box">
     <div class="modal-hdr">
       <div>
         <div class="modal-title">Assignment Instructions</div>
-        <div class="modal-sub">Assignment 1.1 — On Location Camera Composition</div>
+        <div class="modal-sub">Assignment 1.1 — Camera Composition</div>
       </div>
       <button class="modal-x" onclick="closeInstr()">✕</button>
     </div>
     <div class="instr-scroll">
-      <p class="instr-intro">Capture five different shot types on location — not in a studio. All footage must be recorded horizontally. For each shot, upload your frame and write a minimum of <strong>50 words</strong> explaining what makes it that shot type.</p>
+      <p class="instr-intro">Capture five different shot types in the field. All footage must be recorded horizontally. For each shot, upload your frame and write a minimum of <strong>50 words</strong> explaining what makes it that shot type.</p>
 
       <div class="instr-h">The Five Shots</div>
 
@@ -880,6 +1024,7 @@ input[type="file"] { display: none; }
     <div class="chk" id="chk-i"><span class="ci">○</span>Frames uploaded</div>
     <div class="chk" id="chk-t"><span class="ci">○</span>Analyses written</div>
   </div>
+  <span class="save-flash" id="save-flash">Auto-saved</span>
   <button class="exp-btn" id="exp-btn" onclick="exportPDF()">Export PDF</button>
 </div>
 
@@ -1310,6 +1455,7 @@ function applyCrop() {
 
   updateRow(i);
   updateBar();
+  saveState();
   closeCrop();
 }
 
@@ -1335,6 +1481,7 @@ function onText(i) {
   }
   updateRow(i);
   updateBar();
+  saveState();
 }
 
 /* ── STATUS ─────────────────────────────────────────────── */
@@ -1381,7 +1528,7 @@ function setChk(id, pass) {
   el.querySelector('.ci').textContent = pass ? '✓' : '○';
 }
 
-document.getElementById('sname').addEventListener('input', updateBar);
+document.getElementById('sname').addEventListener('input', () => { updateBar(); saveState(); });
 
 /* ── INSTRUCTIONS ───────────────────────────────────────── */
 function openInstr() {
@@ -1433,19 +1580,35 @@ async function exportPDF() {
       pdf.setTextColor(100, 96, 90);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(7);
-      pdf.text('Assignment 1.1 — On Location Camera Composition', M + 35, 9);
+      pdf.text('Assignment 1.1 — Camera Composition', M + 35, 9);
       pdf.setTextColor(170, 166, 160);
       pdf.text(student, PW - M, 13, { align: 'right' });
 
-      // Shot type label
+      // Shot type label + status badge
       pdf.setTextColor(17, 17, 22);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(22);
       pdf.text(sh.type.toUpperCase(), M, 32);
-      pdf.setTextColor(120, 116, 108);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(8);
+      pdf.setTextColor(120, 116, 108);
       pdf.text(`SHOT ${i + 1} OF ${SHOTS.length}`, M, 39);
+
+      // Completion status — top right of shot section
+      const stCol = s.status === 'complete'    ? [25, 115, 62]
+                  : s.status === 'in-progress' ? [154, 90, 0]
+                  : [160, 156, 148];
+      const stLbl = s.status === 'complete'    ? 'COMPLETE'
+                  : s.status === 'in-progress' ? 'IN PROGRESS'
+                  : 'EMPTY';
+      // Pill background
+      pdf.setFontSize(7);
+      pdf.setFont('helvetica', 'bold');
+      const stW = pdf.getStringUnitWidth(stLbl) * 7 / pdf.internal.scaleFactor + 8;
+      pdf.setFillColor(...stCol.map(c => Math.round(c * 0.15 + 255 * 0.85))); // light tint
+      pdf.roundedRect(PW - M - stW, 26, stW, 8, 1, 1, 'F');
+      pdf.setTextColor(...stCol);
+      pdf.text(stLbl, PW - M - stW / 2, 32, { align: 'center' });
 
       // Image
       const imgY = 44;
@@ -1492,14 +1655,103 @@ async function exportPDF() {
     alert('Export failed — see browser console for details.');
   } finally {
     btn.classList.remove('busy');
+    btn.disabled = false;
     btn.textContent = orig;
-    updateBar();
   }
+}
+
+/* ── SAVE / RESTORE ─────────────────────────────────────── */
+function saveState() {
+  try {
+    localStorage.setItem('fc_v1', JSON.stringify({
+      name:  document.getElementById('sname').value,
+      shots: ST.map(s => ({ dataUrl: s.dataUrl, rawUrl: s.rawUrl, text: s.text })),
+    }));
+    flashSaved();
+  } catch (e) { /* quota exceeded — silent */ }
+}
+
+function restoreState() {
+  const raw = localStorage.getItem('fc_v1');
+  if (!raw) return;
+  try {
+    const d = JSON.parse(raw);
+    document.getElementById('sname').value = d.name || '';
+    (d.shots || []).forEach((s, i) => {
+      if (i >= ST.length) return;
+      ST[i].text   = s.text   || '';
+      ST[i].rawUrl = s.rawUrl || null;
+      if (s.dataUrl) {
+        ST[i].dataUrl = s.dataUrl;
+        const prev = document.getElementById(`prev-${i}`);
+        const hint = document.getElementById(`hint-${i}`);
+        const box  = document.getElementById(`upbox-${i}`);
+        prev.src = s.dataUrl;
+        prev.style.display = 'block';
+        hint.style.display = 'none';
+        box.classList.add('has-img', 'frame-ok');
+        document.getElementById(`chip-${i}`).className = '';
+        setMsg(i, '✓  Frame set and ready', 'ok');
+      }
+      if (s.text) {
+        const ta = document.getElementById(`ta-${i}`);
+        ta.value = s.text;
+        onText(i);
+      } else {
+        updateRow(i);
+      }
+    });
+    updateBar();
+  } catch (e) { console.warn('Restore failed', e); }
+  document.getElementById('restore-bar').classList.remove('show');
+}
+
+function startFresh() {
+  localStorage.removeItem('fc_v1');
+  document.getElementById('restore-bar').classList.remove('show');
+}
+
+function flashSaved() {
+  const el = document.getElementById('save-flash');
+  if (!el) return;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ── WELCOME ────────────────────────────────────────────── */
+function openWelcome() {
+  document.getElementById('welcome-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('wname').focus(), 150);
+}
+function submitWelcome() {
+  const name = document.getElementById('wname').value.trim();
+  document.getElementById('sname').value = name;
+  document.getElementById('welcome-modal').style.display = 'none';
+  updateBar();
+  saveState();
+}
+function skipWelcome() {
+  document.getElementById('welcome-modal').style.display = 'none';
+  setTimeout(() => document.getElementById('sname').focus(), 200);
 }
 
 /* ── INIT ───────────────────────────────────────────────── */
 buildRows();
 updateBar();
+
+// Check for saved work, otherwise show welcome prompt
+const _saved = localStorage.getItem('fc_v1');
+if (_saved) {
+  try {
+    const _d = JSON.parse(_saved);
+    const _hasWork = (_d.name || '').trim() ||
+      (_d.shots || []).some(s => s.dataUrl || (s.text || '').trim());
+    if (_hasWork) {
+      document.getElementById('restore-bar').classList.add('show');
+    } else { openWelcome(); }
+  } catch (e) { openWelcome(); }
+} else { openWelcome(); }
 
 // Attach crop canvas events after DOM is ready
 const cc = document.getElementById('crop-canvas');
@@ -1512,7 +1764,7 @@ cc.addEventListener('touchstart', onCTS,    { passive: false });
 cc.addEventListener('touchmove',  onCTM,    { passive: false });
 cc.addEventListener('touchend',   onCTE);
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCrop(); closeInstr(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCrop(); closeInstr(); skipWelcome(); } });
 </script>
 </body>
 </html>
